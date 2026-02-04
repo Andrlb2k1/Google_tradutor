@@ -52,10 +52,24 @@ function App() {
             <div className="p-4">
               <textarea placeholder="Digite seu texto..." className="w-full h-40 text-lg text-textColor bg-transparent resize-none border-none outline-none"></textarea>
             </div>
+
+            <div className="p-4 relative bg-secondaryBackground border-l border-gray-200">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
+
+                <p className="text-lg text-textColor"></p>
+              </div>
+            </div>
           </div>
 
         </div>
       </main>
+
+      <footer className="bg-white border-t border-gray-200 mt-auto">
+        <div className="max-w-5xl mx-auto px-4 py-3 text-sm text-headerColor">
+          &copy; André Luiz Bristot - {new Date().getFullYear()}
+        </div>
+      </footer>
 
     </div>
   )
