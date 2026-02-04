@@ -17,3 +17,9 @@ npm install -D tailwindcss@3
 npx tailwindcss init -p
 
 npm run dev
+
+Links:
+
+https://mymemory.translated.net/
+
+https://mymemory.translated.net/doc/spec.php

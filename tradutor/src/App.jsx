@@ -1,3 +1,5 @@
+import { useState, useEffect, use } from 'react'
+
 const languages = [
   { code: 'en', name: 'Inglês' },
   { code: 'es', name: 'Espanhol' },
@@ -9,6 +11,53 @@ const languages = [
 
 
 function App() {
+
+  const [sourceLang, setSourceLang] = useState('pt')
+  const [targetLang, setTargetLang] = useState('en')
+  const [sourceText, setSourceText] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [translatedText, setTranslatedText] = useState('')
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (sourceText) {
+      const delay = setTimeout(() => {
+        handleTranslate()
+      }, 300);
+
+      return () => clearTimeout(delay);
+    }
+
+  }, [sourceText, targetLang, sourceLang])
+
+  const handleTranslate = async () => {
+    setIsLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch(`https://api.mymemory.translated.net/get?q=${sourceText}&langpair=${sourceLang}|${targetLang}`)
+
+      if (!response.ok) {
+        throw new Error(`HTTP ERROR: ${response.status}`)
+      }
+
+      const data = await response.json()
+
+      setTranslatedText(data.responseData.translatedText)
+    } catch (error) {
+  setError(`Erro ao tentar traduzir: ${error.message}. Tente novamente!`)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const swapTranslate = () => {
+    setSourceLang(targetLang)
+    setTargetLang(sourceLang)
+    setSourceText(translatedText)
+    setTranslatedText(sourceText)
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
 
@@ -22,13 +71,15 @@ function App() {
         <div className="w-full max-w-5xl bg-white rounded-lg shadow-md overflow-hidden">
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <select
+              value={sourceLang}
+              onChange={event => setSourceLang(event.target.value)}
               className="text-sm text-textColor bg-transparent border-none focus:outline-none cursor-pointer"
             >
               {languages.map((lang) => {
                 return <option key={lang.code} value={lang.code}>{lang.name}</option>
               })}
             </select>
-            <button className="p-2 rounded-full hover:bg-gray-100 outline-none">
+            <button onClick={swapTranslate} className="p-2 rounded-full hover:bg-gray-100 outline-none">
               <svg
                 className="w-5 h-5 text-headerColor"
                 fill="none"
@@ -40,6 +91,8 @@ function App() {
               </svg>
             </button>
             <select
+              value={targetLang}
+              onChange={event => setTargetLang(event.target.value)}
               className="text-sm text-textColor bg-transparent border-none focus:outline-none cursor-pointer"
             >
               {languages.map((lang) => {
@@ -50,17 +103,34 @@ function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2">
             <div className="p-4">
-              <textarea placeholder="Digite seu texto..." className="w-full h-40 text-lg text-textColor bg-transparent resize-none border-none outline-none"></textarea>
+              <textarea
+                value={sourceText}
+                onChange={event => setSourceText(event.target.value)}
+                placeholder="Digite seu texto..."
+                className="w-full h-40 text-lg text-textColor bg-transparent resize-none border-none outline-none"
+              >
+
+              </textarea>
             </div>
 
             <div className="p-4 relative bg-secondaryBackground border-l border-gray-200">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
 
-                <p className="text-lg text-textColor"></p>
-              </div>
+              {isLoading &&
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
+                </div>
+              } : {
+                <p className="text-lg text-textColor">{translatedText}</p>
+              }
+
             </div>
           </div>
+
+          {error && 
+          <div className='p-4 bg-red-100 border-t border-red-400 text-red-700'>
+            {error}
+          </div>
+          }
 
         </div>
       </main>
