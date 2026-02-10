@@ -7,6 +7,10 @@ const languages = [
   { code: 'de', name: 'Alemão' },
   { code: 'it', name: 'Italiano' },
   { code: 'pt', name: 'Português' },
+  { code: 'ja', name: 'Japonês' },
+  { code: 'ko', name: 'Coreano' },
+  { code: 'zh', name: 'Chinês' },
+  { code: 'ar', name: 'Árabe' },
 ]
 
 
